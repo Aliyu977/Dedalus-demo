@@ -1,0 +1,1421 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dedalus — Build Your Free AI Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Epilogue:wght@400;500;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f3ee;
+  --bg2: #eceae3;
+  --black: #111010;
+  --ink: #1e1c1a;
+  --muted: #8a8680;
+  --border: #d4d0c8;
+  --border-dark: #b8b3a8;
+  --blue: #1a4bd4;
+  --blue-light: #e8edfb;
+  --blue-mid: #c2cfF4;
+  --green: #0d7a4e;
+  --green-light: #e2f5ec;
+  --orange: #c94f1a;
+  --orange-light: #fceee8;
+  --panel: #ffffff;
+  --shadow: 0 2px 12px rgba(17,16,16,0.08), 0 1px 3px rgba(17,16,16,0.05);
+  --shadow-lg: 0 8px 32px rgba(17,16,16,0.12), 0 2px 8px rgba(17,16,16,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Grid paper background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.45;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* ── HEADER ── */
+header {
+  position: relative;
+  z-index: 1;
+  padding: 28px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+.header-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--muted);
+  border: 1px solid var(--border-dark);
+  padding: 4px 10px;
+  background: var(--panel);
+  letter-spacing: 0.06em;
+}
+
+/* ── HERO ── */
+.hero {
+  padding: 52px 0 40px;
+  text-align: center;
+}
+
+.hero-kicker {
+  display: inline-block;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-light);
+  border: 1px solid var(--blue-mid);
+  padding: 5px 14px;
+  margin-bottom: 22px;
+}
+
+.hero h1 {
+  font-family: 'Epilogue', sans-serif;
+  font-size: clamp(32px, 6vw, 52px);
+  font-weight: 900;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--black);
+  margin-bottom: 16px;
+}
+
+.hero h1 em {
+  font-style: normal;
+  color: var(--blue);
+  position: relative;
+  display: inline-block;
+}
+
+.hero h1 em::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; left: 0; right: 0;
+  height: 3px;
+  background: var(--blue);
+  opacity: 0.25;
+}
+
+.hero-sub {
+  font-size: 16px;
+  color: var(--ink);
+  max-width: 440px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+.hero-sub strong { color: var(--black); font-weight: 700; }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap {
+  margin: 40px 0 0;
+}
+
+.progress-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 28px;
+}
+
+.p-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+
+.p-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: calc(50% + 14px);
+  width: calc(100% - 0px);
+  height: 1px;
+  background: var(--border-dark);
+  min-width: 40px;
+}
+
+.p-step.done .p-step:not(:last-child)::after { background: var(--blue); }
+
+.p-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border-dark);
+  background: var(--panel);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.p-step.active .p-dot {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  box-shadow: 0 0 0 4px var(--blue-mid);
+}
+
+.p-step.done .p-dot {
+  background: var(--green);
+  border-color: var(--green);
+  color: #fff;
+}
+
+.p-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.p-step.active .p-label { color: var(--blue); }
+.p-step.done .p-label { color: var(--green); }
+
+.p-connector {
+  width: 48px;
+  height: 1px;
+  background: var(--border-dark);
+  margin-bottom: 22px;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.p-connector.done { background: var(--green); }
+
+/* ── CARD ── */
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 32px;
+  margin-bottom: 12px;
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card-step-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+
+.card h2 {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.card-desc {
+  font-size: 13.5px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  line-height: 1.55;
+}
+
+/* ── FORM ELEMENTS ── */
+.field { margin-bottom: 16px; }
+
+label {
+  display: block;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+input[type="email"],
+input[type="text"],
+textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-light);
+}
+
+input.error { border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-light); }
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.6;
+}
+
+/* Custom select */
+.select-wrap {
+  position: relative;
+}
+
+.select-wrap::after {
+  content: '▾';
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  font-size: 12px;
+}
+
+select {
+  width: 100%;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 12px 36px 12px 14px;
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-light);
+}
+
+select:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--bg2);
+}
+
+/* ── TOOL CARDS ── */
+.tool-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.tool-card {
+  border: 1.5px solid var(--border);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  background: var(--bg);
+  position: relative;
+  user-select: none;
+}
+
+.tool-card:hover {
+  border-color: var(--blue);
+  background: var(--blue-light);
+}
+
+.tool-card.selected {
+  border-color: var(--blue);
+  background: var(--blue-light);
+  box-shadow: 0 0 0 3px var(--blue-mid);
+}
+
+.tool-card.locked {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.tool-card-icon {
+  font-size: 20px;
+  margin-bottom: 6px;
+  line-height: 1;
+}
+
+.tool-card-name {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 3px;
+}
+
+.tool-card-desc {
+  font-size: 11.5px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.tool-check {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--blue);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-check svg { width: 10px; height: 10px; }
+.tool-card.selected .tool-check { display: flex; }
+
+.lock-icon {
+  position: absolute;
+  top: 10px; right: 10px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* ── MODEL PILLS ── */
+.model-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.model-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--border);
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: var(--bg);
+  user-select: none;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.model-pill:hover { border-color: var(--blue); background: var(--blue-light); }
+.model-pill.selected {
+  border-color: var(--blue);
+  background: var(--blue-light);
+  box-shadow: 0 0 0 3px var(--blue-mid);
+  color: var(--blue);
+  font-weight: 500;
+}
+
+.model-pill.locked {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.model-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.model-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  padding: 2px 6px;
+  letter-spacing: 0.04em;
+}
+
+.tag-best { background: var(--green-light); color: var(--green); }
+.tag-fast { background: var(--blue-light); color: var(--blue); }
+.tag-long { background: var(--orange-light); color: var(--orange); }
+
+/* ── INTEGRATION BOX ── */
+.integration-box {
+  border: 1.5px dashed var(--border-dark);
+  background: var(--bg2);
+  padding: 18px 20px;
+  margin: 16px 0;
+  display: none;
+}
+
+.integration-box.visible { display: block; animation: slideIn 0.3s ease; }
+
+.integration-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 8px;
+}
+
+.integration-desc {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 14px;
+  line-height: 1.55;
+}
+
+.integration-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--panel);
+  border: 1.5px solid var(--border-dark);
+  padding: 8px 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.integration-btn:hover { border-color: var(--blue); background: var(--blue-light); color: var(--blue); }
+.integration-btn-icon { font-size: 15px; }
+
+/* ── CODE PREVIEW ── */
+.code-preview {
+  background: var(--black);
+  padding: 18px 20px;
+  margin: 20px 0 0;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  overflow-x: auto;
+  display: none;
+  animation: slideIn 0.3s ease;
+}
+
+.code-preview.visible { display: block; }
+
+.code-comment { color: #666; }
+.code-key { color: #4d9fff; }
+.code-val { color: #00e5a0; }
+.code-str { color: #ff9d6c; }
+.code-fn { color: #c084fc; }
+
+/* ── BUTTONS ── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  font-family: 'Epilogue', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary:hover { background: #1540b8; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+.btn-primary:disabled { background: var(--border-dark); cursor: not-allowed; transform: none; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--muted);
+  border: 1.5px solid var(--border-dark);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover { border-color: var(--ink); color: var(--ink); }
+
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* ── ACTIVATION GATE ── */
+.gate-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(245,243,238,0.7);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+}
+
+.gate-msg {
+  text-align: center;
+  padding: 24px;
+}
+
+.gate-icon { font-size: 28px; margin-bottom: 8px; }
+.gate-title {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.gate-sub { font-size: 13px; color: var(--muted); }
+
+/* ── SUCCESS STATE ── */
+.success-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  padding: 48px 32px;
+  text-align: center;
+  display: none;
+  animation: slideIn 0.4s ease;
+}
+
+.success-card.visible { display: block; }
+
+.success-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--green-light);
+  border: 2px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 20px;
+}
+
+.success-card h2 {
+  font-family: 'Epilogue', sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--black);
+  margin-bottom: 10px;
+  letter-spacing: -0.02em;
+}
+
+.success-card p {
+  font-size: 15px;
+  color: var(--muted);
+  max-width: 380px;
+  margin: 0 auto 28px;
+  line-height: 1.6;
+}
+
+.agent-url-box {
+  background: var(--black);
+  padding: 14px 20px;
+  font-family: 'Space Mono', monospace;
+  font-size: 13px;
+  color: #00e5a0;
+  text-align: left;
+  margin: 0 auto 28px;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.copy-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #666;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+.copy-btn:hover { border-color: #00e5a0; color: #00e5a0; }
+
+.what-next {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 20px 24px;
+  text-align: left;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.what-next-title {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.next-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+
+.next-num {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--blue);
+  background: var(--blue-light);
+  padding: 2px 7px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ── OTP INPUT ── */
+.otp-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.otp-input {
+  width: 48px; height: 56px;
+  text-align: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 22px;
+  font-weight: 700;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.otp-input:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-light);
+}
+
+.otp-input.filled { border-color: var(--green); background: var(--green-light); }
+
+/* ── INLINE NOTICE ── */
+.notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+.notice-icon { flex-shrink: 0; margin-top: 1px; }
+
+/* ── FOOTER ── */
+.footer-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 28px;
+  line-height: 1.6;
+}
+
+.footer-note a { color: var(--blue); text-decoration: none; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 520px) {
+  .tool-grid { grid-template-columns: 1fr; }
+  .model-grid { flex-direction: column; }
+  .card { padding: 24px 18px; }
+  .otp-row { gap: 6px; }
+  .otp-input { width: 40px; height: 48px; font-size: 18px; }
+  header { padding: 20px 16px 0; }
+}
+
+/* Shake animation for errors */
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  20%,60% { transform: translateX(-5px); }
+  40%,80% { transform: translateX(5px); }
+}
+.shake { animation: shake 0.35s ease; }
+
+/* Pulse for active step */
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(26,75,212,0.3); }
+  70% { box-shadow: 0 0 0 8px rgba(26,75,212,0); }
+  100% { box-shadow: 0 0 0 0 rgba(26,75,212,0); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="logo" href="#">DEDALUS LABS</a>
+  <span class="header-badge">FREE AGENT BUILDER · BETA</span>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-kicker">No code. No setup. Live in 60 seconds.</div>
+    <h1>Your free AI agent.<br><em>Built in 4 steps.</em></h1>
+    <p class="hero-sub">
+      Pick a model. Choose what your agent does. Write one prompt.
+      <strong>We handle the rest — deployment, hosting, everything.</strong>
+    </p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-steps" id="progressSteps">
+      <div class="p-step active" data-step="1">
+        <div class="p-dot">1</div>
+        <div class="p-label">Verify</div>
+      </div>
+      <div class="p-connector" id="conn1"></div>
+      <div class="p-step" data-step="2">
+        <div class="p-dot">2</div>
+        <div class="p-label">Model</div>
+      </div>
+      <div class="p-connector" id="conn2"></div>
+      <div class="p-step" data-step="3">
+        <div class="p-dot">3</div>
+        <div class="p-label">Tool</div>
+      </div>
+      <div class="p-connector" id="conn3"></div>
+      <div class="p-step" data-step="4">
+        <div class="p-dot">4</div>
+        <div class="p-label">Prompt</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="step1">
+    <div class="card-step-label">// Step 01 of 04</div>
+    <h2>Enter your email to get started</h2>
+    <p class="card-desc">We'll send you a 4-digit activation code. Once verified, you can configure and launch your free agent.</p>
+
+    <div class="field" id="emailField">
+      <label>Your email address</label>
+      <input type="email" id="emailInput" placeholder="you@company.com" autocomplete="email">
+    </div>
+
+    <div id="otpSection" style="display:none;">
+      <div class="field">
+        <label>Enter your 4-digit code</label>
+        <div class="otp-row">
+          <input class="otp-input" maxlength="1" inputmode="numeric" id="otp0">
+          <input class="otp-input" maxlength="1" inputmode="numeric" id="otp1">
+          <input class="otp-input" maxlength="1" inputmode="numeric" id="otp2">
+          <input class="otp-input" maxlength="1" inputmode="numeric" id="otp3">
+        </div>
+        <div class="notice">
+          <span class="notice-icon">ℹ️</span>
+          <span>Code sent to <strong id="sentTo"></strong>. For this demo, use <strong>1234</strong>. <span style="color:var(--blue); cursor:pointer; text-decoration:underline;" onclick="resendCode()">Resend</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="emailBtn" onclick="handleEmailStep()">
+        Send activation code →
+      </button>
+    </div>
+
+    <div class="notice" style="margin-top:16px;">
+      <span class="notice-icon">🔒</span>
+      <span>No spam. Your email is used only to deliver your agent details. Unsubscribe anytime.</span>
+    </div>
+  </div>
+
+  <div class="card" id="step2" style="position:relative;">
+    <div class="gate-overlay" id="gate2">
+      <div class="gate-msg">
+        <div class="gate-icon">🔒</div>
+        <div class="gate-title">Verify your email first</div>
+        <div class="gate-sub">Complete Step 1 to unlock model selection</div>
+      </div>
+    </div>
+
+    <div class="card-step-label">// Step 02 of 04</div>
+    <h2>Choose your AI model</h2>
+    <p class="card-desc">Each model has different strengths. Pick the one that fits what your agent will do.</p>
+
+    <div class="model-grid">
+      <div class="model-pill" onclick="selectModel(this, 'claude-3-5-sonnet')">
+        <div class="model-dot" style="background:#c084fc;"></div>
+        Claude 3.5 Sonnet
+        <span class="model-tag tag-best">Best reasoning</span>
+      </div>
+      <div class="model-pill" onclick="selectModel(this, 'gpt-4o')">
+        <div class="model-dot" style="background:#4d9fff;"></div>
+        GPT-4o
+        <span class="model-tag tag-fast">Fast + versatile</span>
+      </div>
+      <div class="model-pill" onclick="selectModel(this, 'gemini-1.5-pro')">
+        <div class="model-dot" style="background:#34d399;"></div>
+        Gemini 1.5 Pro
+        <span class="model-tag tag-long">Long context</span>
+      </div>
+      <div class="model-pill locked">
+        <div class="model-dot" style="background:#f59e0b;"></div>
+        Mistral Large
+        <span class="model-tag" style="background:#fef3c7;color:#92400e;">Coming soon</span>
+      </div>
+    </div>
+
+    <div id="modelHint" style="display:none; margin-top:14px;" class="notice">
+      <span class="notice-icon">💡</span>
+      <span id="modelHintText"></span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="modelBtn" onclick="goToStep(3)" disabled>
+        Continue →
+      </button>
+    </div>
+  </div>
+
+  <div class="card" id="step3" style="position:relative;">
+    <div class="gate-overlay" id="gate3">
+      <div class="gate-msg">
+        <div class="gate-icon">🔒</div>
+        <div class="gate-title">Complete the previous steps first</div>
+        <div class="gate-sub">Select your model to unlock tool selection</div>
+      </div>
+    </div>
+
+    <div class="card-step-label">// Step 03 of 04</div>
+    <h2>What should your agent do?</h2>
+    <p class="card-desc">Choose the tool that defines your agent's superpower. You can always add more later.</p>
+
+    <div class="tool-grid">
+
+      <div class="tool-card" onclick="selectTool(this, 'email', false)">
+        <div class="tool-check"><svg viewBox="0 0 10 10" fill="white"><path d="M1.5 5l2.5 2.5 4.5-5"/></svg></div>
+        <div class="tool-card-icon">📧</div>
+        <div class="tool-card-name">Email Automation</div>
+        <div class="tool-card-desc">Draft responses and send follow-up emails automatically based on rules you define.</div>
+      </div>
+
+      <div class="tool-card" onclick="selectTool(this, 'leads', false)">
+        <div class="tool-check"><svg viewBox="0 0 10 10" fill="white"><path d="M1.5 5l2.5 2.5 4.5-5"/></svg></div>
+        <div class="tool-card-icon">🎯</div>
+        <div class="tool-card-name">Lead Capture</div>
+        <div class="tool-card-desc">Collect names, emails, and phone numbers via chat and push them into a spreadsheet or Airtable.</div>
+      </div>
+
+      <div class="tool-card" onclick="selectTool(this, 'monitor', false)">
+        <div class="tool-check"><svg viewBox="0 0 10 10" fill="white"><path d="M1.5 5l2.5 2.5 4.5-5"/></svg></div>
+        <div class="tool-card-icon">📡</div>
+        <div class="tool-card-name">News Monitor</div>
+        <div class="tool-card-desc">Watch topics, keywords, or competitors and get a daily email digest with only the updates that matter.</div>
+      </div>
+
+      <div class="tool-card" onclick="selectTool(this, 'research', false)">
+        <div class="tool-check"><svg viewBox="0 0 10 10" fill="white"><path d="M1.5 5l2.5 2.5 4.5-5"/></svg></div>
+        <div class="tool-card-icon">🔍</div>
+        <div class="tool-card-name">Research Agent</div>
+        <div class="tool-card-desc">Give it a topic. Get back a structured report with sources, summaries, and key takeaways.</div>
+      </div>
+
+      <div class="tool-card" onclick="selectTool(this, 'support', false)">
+        <div class="tool-check"><svg viewBox="0 0 10 10" fill="white"><path d="M1.5 5l2.5 2.5 4.5-5"/></svg></div>
+        <div class="tool-card-icon">💬</div>
+        <div class="tool-card-name">Support Agent</div>
+        <div class="tool-card-desc">Answer customer questions using your docs or knowledge base. Escalate to humans when unsure.</div>
+      </div>
+
+      <div class="tool-card" onclick="selectTool(this, 'data', false)">
+        <div class="tool-check"><svg viewBox="0 0 10 10" fill="white"><path d="M1.5 5l2.5 2.5 4.5-5"/></svg></div>
+        <div class="tool-card-icon">📊</div>
+        <div class="tool-card-name">Data Analyst</div>
+        <div class="tool-card-desc">Upload a CSV or connect a sheet. Ask questions in plain English and get charts and answers back.</div>
+      </div>
+
+    </div>
+
+    <div class="integration-box" id="integrationBox">
+      <div class="integration-label">⚡ Connection required for this tool</div>
+      <div class="integration-desc" id="integrationDesc">This tool needs to connect to an external service to work. Use a pre-built template — no code, one click.</div>
+      <div id="integrationBtns"></div>
+      <div class="notice" style="margin-top:4px;">
+        <span class="notice-icon">ℹ️</span>
+        <span>No account needed for the connection — just click the template and follow the prompts. Takes about 2 minutes.</span>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="toolBtn" onclick="goToStep(4)" disabled>Continue →</button>
+      <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+    </div>
+  </div>
+
+  <div class="card" id="step4" style="position:relative;">
+    <div class="gate-overlay" id="gate4">
+      <div class="gate-msg">
+        <div class="gate-icon">🔒</div>
+        <div class="gate-title">Complete the previous steps first</div>
+        <div class="gate-sub">Select your tool to unlock the prompt step</div>
+      </div>
+    </div>
+
+    <div class="card-step-label">// Step 04 of 04</div>
+    <h2>Tell your agent what to do</h2>
+    <p class="card-desc">Write in plain English. Be specific about what you want, who your audience is, and how you want the agent to behave.</p>
+
+    <div class="field">
+      <label>Your prompt</label>
+      <textarea id="promptInput" placeholder="e.g. You are a lead capture agent for a SaaS company. When someone visits the chat, ask for their name, email, and company size. Be friendly and conversational. Once collected, confirm their details and tell them someone will be in touch within 24 hours."></textarea>
+    </div>
+
+    <div id="promptSuggestion" style="display:none;" class="notice">
+      <span class="notice-icon">✍️</span>
+      <span id="promptSuggestionText" style="font-style:italic; color:var(--blue); cursor:pointer;"></span>
+    </div>
+
+    <div class="code-preview" id="codePreview">
+      <div><span class="code-comment"># Your agent — auto-generated from your config</span></div>
+      <div><span class="code-key">from</span> dedalus <span class="code-key">import</span> Agent, tools</div>
+      <div>&nbsp;</div>
+      <div>agent = Agent(<span class="code-key">model</span>=<span class="code-str" id="codeModel">"..."</span>)</div>
+      <div>agent.add_tools([tools.<span class="code-fn" id="codeTool">...</span>])</div>
+      <div>agent.task = <span class="code-str" id="codePrompt">"Your prompt will appear here"</span></div>
+      <div>agent.<span class="code-fn">deploy</span>()</div>
+      <div>&nbsp;</div>
+      <div><span class="code-comment"># ↑ This is the code running your agent. You wrote zero of it.</span></div>
+    </div>
+
+    <div style="margin-top:14px;" class="notice" id="codeToggle">
+      <span class="notice-icon">⚙️</span>
+      <span><span style="color:var(--blue); cursor:pointer; text-decoration:underline;" onclick="toggleCode()">Show the code your agent runs</span> — for the curious.</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" id="launchBtn" onclick="launchAgent()" disabled>
+        🚀 Launch my agent →
+      </button>
+      <button class="btn-secondary" onclick="goToStep(3)">← Back</button>
+    </div>
+  </div>
+
+  <div class="success-card" id="successCard">
+    <div class="success-icon">✓</div>
+    <h2>Your agent is live.</h2>
+    <p>It's running, hosted, and ready to receive requests. Check your inbox — we sent your agent details and a link to your dashboard.</p>
+
+    <div class="agent-url-box">
+      <span id="agentUrl">agents.dedaluslabs.ai/your-agent</span>
+      <button class="copy-btn" onclick="copyUrl()">COPY</button>
+    </div>
+
+    <div class="what-next">
+      <div class="what-next-title">// What happens next</div>
+      <div class="next-item">
+        <span class="next-num">01</span>
+        Check your email — your full agent config, dashboard link, and access code are on their way.
+      </div>
+      <div class="next-item">
+        <span class="next-num">02</span>
+        Open your dashboard to see your agent running, read the logs, and edit your prompt.
+      </div>
+      <div class="next-item">
+        <span class="next-num">03</span>
+        Over the next 5 days, we'll send you patterns, templates, and real examples to get more from your agent.
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center; margin-top:24px;">
+      <button class="btn-primary" onclick="window.open('https://dedaluslabs.ai','_blank')">
+        Open my dashboard →
+      </button>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    Built by <a href="https://dedaluslabs.ai">Dedalus Labs</a> · YC S25 ·
+    <a href="#">Privacy</a> · <a href="#">Unsubscribe</a>
+  </div>
+
+</div><script>
+// ── STATE ──
+const state = {
+  email: '',
+  verified: false,
+  model: '',
+  tool: '',
+  prompt: '',
+  currentStep: 1,
+  codeVisible: false
+};
+
+const DEMO_CODE = '1234';
+
+const modelHints = {
+  'claude-3-5-sonnet': 'Best for tasks that need nuanced judgment — writing, analysis, complex instructions, and multi-step reasoning.',
+  'gpt-4o': 'Great all-rounder. Fast responses, strong at structured output, ideal for high-volume tasks.',
+  'gemini-1.5-pro': 'Handles extremely long inputs — up to 1M tokens. Best when your agent needs to read large documents.'
+};
+
+const toolIntegrations = {
+  'email': {
+    needs: true,
+    desc: 'Email Automation needs to connect to your inbox to send emails on your behalf.',
+    btns: [
+      { icon: '⚡', label: 'Connect via Zapier', url: 'https://zapier.com/apps/gmail/integrations' },
+      { icon: '🔗', label: 'Connect via Make', url: 'https://make.com' }
+    ]
+  },
+  'leads': {
+    needs: true,
+    desc: 'Lead Capture needs somewhere to save your leads — connect Airtable or Google Sheets.',
+    btns: [
+      { icon: '📋', label: 'Connect Airtable', url: 'https://airtable.com' },
+      { icon: '📊', label: 'Connect Google Sheets', url: 'https://zapier.com/apps/google-sheets/integrations' }
+    ]
+  },
+  'monitor': {
+    needs: true,
+    desc: 'News Monitor needs an email address to send your daily digest to.',
+    btns: [
+      { icon: '📬', label: 'Connect your email', url: 'https://zapier.com' }
+    ]
+  },
+  'research': { needs: false },
+  'support': { needs: false },
+  'data': { needs: false }
+};
+
+const toolPromptSuggestions = {
+  'email': 'You are an email assistant. When you receive an incoming email, draft a professional and friendly reply. Match the tone of the sender. If the email requires action, flag it clearly. Sign off as [Your Name] from [Your Company].',
+  'leads': 'You are a lead capture assistant for [Company Name]. Greet visitors warmly and ask for their name, email, and what they are looking for. Keep the conversation natural and short. Once you have their details, thank them and let them know the team will be in touch within 24 hours.',
+  'monitor': 'Monitor news and updates about [topic or company name]. Every day at 9am, collect the 5 most relevant developments from the last 24 hours, summarize each one in 2 sentences, and send a digest email to [your email].',
+  'research': 'You are a research assistant. When given a topic, search the web for the most relevant and recent information, synthesize the findings into a structured report with sections for overview, key insights, and sources. Keep the report concise — under 500 words.',
+  'support': 'You are a helpful customer support agent for [Company Name]. Answer questions using the knowledge base provided. If you are not confident in an answer, say so honestly and offer to escalate to a human. Always be polite, clear, and brief.',
+  'data': 'You are a data analysis assistant. When given a dataset, answer questions about it in plain English. Identify trends, outliers, and key patterns. Explain your findings clearly without using jargon. If a chart would help, describe what it would look like.'
+};
+
+const toolCodeNames = {
+  'email': 'email_responder',
+  'leads': 'lead_capture',
+  'monitor': 'news_monitor',
+  'research': 'web_search, summarizer',
+  'support': 'kb_reader, escalation',
+  'data': 'csv_reader, code_runner'
+};
+
+// ── STEP 1: EMAIL ──
+function handleEmailStep() {
+  if (!state.verified) {
+    sendCode();
+  } else {
+    verifyCode();
+  }
+}
+
+function sendCode() {
+  const input = document.getElementById('emailInput');
+  const email = input.value.trim();
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    input.classList.add('error');
+    input.classList.add('shake');
+    input.placeholder = 'Please enter a valid email';
+    setTimeout(() => { input.classList.remove('shake'); input.classList.remove('error'); }, 600);
+    return;
+  }
+
+  state.email = email;
+
+  // Show OTP section
+  document.getElementById('emailField').style.display = 'none';
+  document.getElementById('otpSection').style.display = 'block';
+  document.getElementById('sentTo').textContent = email;
+
+  const btn = document.getElementById('emailBtn');
+  btn.textContent = 'Verify code →';
+  btn.onclick = verifyCode;
+
+  // Focus first OTP input
+  setTimeout(() => document.getElementById('otp0').focus(), 100);
+
+  // OTP auto-advance
+  for (let i = 0; i < 4; i++) {
+    const inp = document.getElementById('otp' + i);
+    inp.addEventListener('input', function() {
+      if (this.value.length === 1) {
+        this.classList.add('filled');
+        if (i < 3) document.getElementById('otp' + (i+1)).focus();
+        else verifyCode();
+      }
+    });
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && i > 0) {
+        document.getElementById('otp' + (i-1)).focus();
+      }
+    });
+  }
+}
+
+function verifyCode() {
+  const code = ['otp0','otp1','otp2','otp3'].map(id => document.getElementById(id).value).join('');
+
+  if (code === DEMO_CODE) {
+    state.verified = true;
+    document.getElementById('gate2').style.display = 'none';
+    goToStep(2);
+
+    const btn = document.getElementById('emailBtn');
+    btn.textContent = '✓ Verified';
+    btn.style.background = 'var(--green)';
+    btn.disabled = true;
+  } else {
+    ['otp0','otp1','otp2','otp3'].forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.remove('filled');
+      el.classList.add('error', 'shake');
+      el.value = '';
+      setTimeout(() => el.classList.remove('shake','error'), 600);
+    });
+    document.getElementById('otp0').focus();
+  }
+}
+
+function resendCode() {
+  ['otp0','otp1','otp2','otp3'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = '';
+    el.classList.remove('filled','error');
+  });
+  document.getElementById('otp0').focus();
+}
+
+// ── STEP 2: MODEL ──
+function selectModel(el, model) {
+  document.querySelectorAll('.model-pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  state.model = model;
+
+  const hint = document.getElementById('modelHint');
+  const hintText = document.getElementById('modelHintText');
+  hint.style.display = 'flex';
+  hintText.textContent = modelHints[model];
+
+  document.getElementById('modelBtn').disabled = false;
+  updateCodePreview();
+}
+
+// ── STEP 3: TOOL ──
+function selectTool(el, tool, needsIntegration) {
+  document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.tool = tool;
+
+  // Integration box
+  const config = toolIntegrations[tool];
+  const box = document.getElementById('integrationBox');
+  const desc = document.getElementById('integrationDesc');
+  const btnsEl = document.getElementById('integrationBtns');
+
+  if (config.needs) {
+    box.classList.add('visible');
+    desc.textContent = config.desc;
+    btnsEl.innerHTML = config.btns.map(b =>
+      `<a class="integration-btn" href="${b.url}" target="_blank">
+        <span class="integration-btn-icon">${b.icon}</span>${b.label}
+      </a>`
+    ).join('');
+  } else {
+    box.classList.remove('visible');
+  }
+
+  // Prompt suggestion
+  const sug = document.getElementById('promptSuggestion');
+  const sugText = document.getElementById('promptSuggestionText');
+  if (toolPromptSuggestions[tool]) {
+    sug.style.display = 'flex';
+    sugText.textContent = '✍️ Use suggested prompt for this tool →';
+    sugText.onclick = () => {
+      document.getElementById('promptInput').value = toolPromptSuggestions[tool];
+      state.prompt = toolPromptSuggestions[tool];
+      updateCodePreview();
+      checkPrompt();
+    };
+  }
+
+  document.getElementById('toolBtn').disabled = false;
+  updateCodePreview();
+}
+
+// ── STEP 4: PROMPT ──
+document.addEventListener('DOMContentLoaded', () => {
+  const promptInput = document.getElementById('promptInput');
+  if (promptInput) {
+    promptInput.addEventListener('input', checkPrompt);
+  }
+});
+
+function checkPrompt() {
+  const val = document.getElementById('promptInput').value.trim();
+  state.prompt = val;
+  document.getElementById('launchBtn').disabled = val.length < 10;
+  updateCodePreview();
+}
+
+function toggleCode() {
+  state.codeVisible = !state.codeVisible;
+  const preview = document.getElementById('codePreview');
+  if (state.codeVisible) {
+    preview.classList.add('visible');
+  } else {
+    preview.classList.remove('visible');
+  }
+}
+
+function updateCodePreview() {
+  const modelEl = document.getElementById('codeModel');
+  const toolEl = document.getElementById('codeTool');
+  const promptEl = document.getElementById('codePrompt');
+  if (modelEl && state.model) modelEl.textContent = `"${state.model}"`;
+  if (toolEl && state.tool) toolEl.textContent = toolCodeNames[state.tool] || state.tool;
+  if (promptEl && state.prompt) {
+    const short = state.prompt.length > 50 ? state.prompt.slice(0,50) + '..."' : `${state.prompt}"`;
+    promptEl.textContent = `"${short}`;
+  }
+}
+
+// ── NAVIGATION ──
+function goToStep(step) {
+  // Update progress indicators
+  document.querySelectorAll('.p-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.classList.remove('active','done');
+    if (s < step) el.classList.add('done');
+    else if (s === step) el.classList.add('active');
+  });
+
+  // Update connectors
+  for (let i = 1; i <= 3; i++) {
+    const conn = document.getElementById('conn' + i);
+    if (conn) conn.classList.toggle('done', i < step);
+  }
+
+  // Unlock gates
+  if (step >= 2) document.getElementById('gate2').style.display = 'none';
+  if (step >= 3) document.getElementById('gate3').style.display = 'none';
+  if (step >= 4) {
+    document.getElementById('gate4').style.display = 'none';
+    document.getElementById('codePreview').classList.add('visible');
+    updateCodePreview();
+    // Wire up prompt listener
+    const promptInput = document.getElementById('promptInput');
+    promptInput.addEventListener('input', checkPrompt);
+  }
+
+  state.currentStep = step;
+
+  // Scroll to newly activated card
+  const stepMap = { 2: 'step2', 3: 'step3', 4: 'step4' };
+  if (stepMap[step]) {
+    setTimeout(() => {
+      document.getElementById(stepMap[step]).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+}
+
+// ── LAUNCH ──
+function launchAgent() {
+  const btn = document.getElementById('launchBtn');
+  btn.textContent = '⏳ Deploying...';
+  btn.disabled = true;
+
+  // Simulate deploy
+  setTimeout(() => {
+    ['step1','step2','step3','step4'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+
+    // Generate fake agent URL
+    const slug = state.tool + '-' + Math.random().toString(36).slice(2,7);
+    document.getElementById('agentUrl').textContent = `agents.dedaluslabs.ai/${slug}`;
+
+    const success = document.getElementById('successCard');
+    success.classList.add('visible');
+    success.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // Mark all steps done
+    document.querySelectorAll('.p-step').forEach(el => el.classList.add('done'));
+    document.querySelectorAll('.p-connector').forEach(el => el.classList.add('done'));
+  }, 1800);
+}
+
+function copyUrl() {
+  const url = document.getElementById('agentUrl').textContent;
+  navigator.clipboard?.writeText(url);
+  const btn = document.querySelector('.copy-btn');
+  btn.textContent = 'COPIED';
+  setTimeout(() => btn.textContent = 'COPY', 2000);
+}
+</script>
+</body>
+</html>
